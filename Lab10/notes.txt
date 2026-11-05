@@ -1,0 +1,51 @@
+Operating Systems - Laboratory Work 10
+Add Your Own System Call: trace
+
+PART 3 - OBSERVATIONS
+
+1. Why does trace 32 grep hello README show only read?
+
+The mask 32 corresponds to 2^5, and system call
+number 5 is read(). Therefore, only read()
+system calls are displayed. Other calls such
+as open() and close() are not traced because
+their bits are not enabled in the mask.
+
+2. Why do three different PIDs print lines
+during the forkforkfork test?
+
+In kernel/proc.c, the following line was added:
+
+np->trace_mask = p->trace_mask;
+
+This copies the tracing mask from the parent
+process to its child. Therefore, all child
+processes inherit the tracing configuration
+and their fork() calls are displayed.
+
+3. Why is the trace message printed between
+"hi" and the newline?
+
+The echo program calls write() twice.
+
+The first write() prints "hi" (2 bytes).
+After this call, the kernel prints the trace
+message. The second write() prints the newline
+character (1 byte).
+
+Therefore, the trace output appears between
+"hi" and the newline.
+
+4. Which mask traces both open and close?
+
+The system call numbers are:
+open = 15
+close = 21
+
+The mask is calculated as:
+
+2^15 + 2^21
+= 32768 + 2097152
+= 2129920
+
+Therefore, the required mask is 2129920.
