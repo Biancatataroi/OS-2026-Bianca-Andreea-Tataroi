@@ -1,0 +1,72 @@
+
+Operating Systems – Lab 18
+Build a User-Level Thread Switch
+
+Goal:
+To implement user-level thread switching in xv6
+by saving and restoring CPU registers.
+
+Part 1 – Implementation
+
+I created user/uthread.c to implement thread
+creation, scheduling, and yielding.
+
+I created user/uthread_switch.S to implement
+context switching using RISC-V assembly.
+
+Each thread has its own stack and saved context.
+
+The thread scheduler uses the round-robin method.
+
+Part 2 – Execution
+
+Three threads were created:
+thread_a, thread_b, and thread_c.
+
+Each thread counts from 0 to 99 and yields
+to another thread after each increment.
+
+Each thread completes 100 iterations.
+
+The implementation runs entirely in user space
+without modifying the xv6 kernel.
+
+Observation Question:
+
+What exactly does thread_switch save and load?
+Why is ra the register that makes execution
+continue in the other thread?
+
+Answer:
+
+thread_switch saves the callee-saved registers
+of the current thread into its context structure.
+
+These registers are:
+ra, sp, and s0 through s11.
+
+It then restores the same registers from the
+saved context of the next thread.
+
+The ra register contains the return address.
+When the ret instruction executes, the CPU
+uses the restored ra value to determine where
+execution continues.
+
+For a newly created thread, ra is initialized
+with the address of its starting function.
+For a previously running thread, ra contains
+the address where it should resume.
+
+The sp register points to the thread's stack,
+allowing each thread to use its own stack.
+
+Conclusion:
+
+This laboratory demonstrated how user-level
+threads can be created and switched without
+kernel modifications.
+
+By saving and restoring the thread context,
+the program allows three threads to take
+turns executing using cooperative scheduling.
